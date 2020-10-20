@@ -1,8 +1,8 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import cv2
-import time
 import utils
+import time
 
 
 cap = cv2.VideoCapture('lane_video.mp4')
