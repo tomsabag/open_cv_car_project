@@ -4,7 +4,6 @@ import cv2
 import time
 import utils
 
-delete_this_variable = [False]
 
 cap = cv2.VideoCapture('lane_video.mp4')
 # Adjust width and height according to rasberry pi camera
