@@ -33,14 +33,14 @@ def lane_curve(frame):
                                                  display=True, region_percentage=4)
     curve_avg_point, hist_image_all = utils.get_histogram(warped_and_threshed_frame, min_thresh_percent=0.9,
                                                  display=True)
-    curve_raw = curve_avg_point - middle_point
+    curve_raw = curve_avg_point - middle_point  # curve value
 
     # curve calculation
     curve_list.append(curve_raw)
     if len(curve_list) > curve_list_avg_len:
         curve_list.pop(0)
     curve = sum(curve_list) // len(curve_list)
-    hist_image_quarter = utils.display_curve(hist_image_quarter, curve_raw, fps)
+    hist_image_quarter = utils.display_curve(hist_image_quarter, curve, fps)
 
     # visualize frames
     frames_stack1 = cv2.hconcat([hist_image_quarter, hist_image_all, frame_with_points])
