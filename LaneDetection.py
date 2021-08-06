@@ -4,7 +4,6 @@ import cv2
 import utils
 import time
 
-
 cap = cv2.VideoCapture('lane_video.mp4')
 # Adjust width and height according to rasberry pi camera
 width = 480
@@ -29,11 +28,11 @@ def lane_curve(frame):
     warped_and_threshed_frame = utils.warp(threshed_frame, points, width, height)
     frame_with_points = utils.draw_points(frame.copy(), points)
     # create mid histogram point
-    middle_point, hist_image_quarter = utils.get_histogram(warped_and_threshed_frame, min_thresh_percent=0.5,
+    base_point, hist_image_quarter = utils.get_histogram(warped_and_threshed_frame, min_thresh_percent=0.5,
                                                  display=True, region_percentage=4)
     curve_avg_point, hist_image_all = utils.get_histogram(warped_and_threshed_frame, min_thresh_percent=0.9,
-                                                 display=True)
-    curve_raw = curve_avg_point - middle_point  # curve value
+                                                 display=True, display_base_point=False)
+    curve_raw = curve_avg_point - base_point  # curve value
 
     # curve calculation
     curve_list.append(curve_raw)
@@ -42,7 +41,14 @@ def lane_curve(frame):
     curve = sum(curve_list) // len(curve_list)
     hist_image_quarter = utils.display_curve(hist_image_quarter, curve, fps)
 
+    #display car
+    car_image = cv2.imread('car2.png')
+    car_y = car_image.shape[0]
+    car_x = car_image.shape[1]
+    hist_image_all[240 - car_y:240 - car_y + 113, base_point - int(car_x / 2):base_point + 135 - int(car_x / 2)] = car_image
+
     # visualize frames
+
     frames_stack1 = cv2.hconcat([hist_image_quarter, hist_image_all, frame_with_points])
     frames_stack2 = cv2.hconcat([threshed_frame, warped_and_threshed_frame])
 

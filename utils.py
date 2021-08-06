@@ -50,7 +50,9 @@ def draw_points(frame, points):
     return frame
 
 
-def get_histogram(frame, min_thresh_percent=0.1, display=False, region_percentage=1):
+def get_histogram(frame, min_thresh_percent=0.1, display=False, region_percentage=1, display_base_point=True):
+    #car_image.resize(113,135,3)
+
     if region_percentage == 1:
         hist_vals = np.sum(frame, axis=0)
     else:
@@ -67,9 +69,22 @@ def get_histogram(frame, min_thresh_percent=0.1, display=False, region_percentag
         hist_img = np.zeros_like(frame)
         hist_img = cv2.cvtColor(hist_img, cv2.COLOR_GRAY2BGR)
 
-        for i, intensity, in enumerate(hist_vals):
-            cv2.line(hist_img, (i, hist_img.shape[0]), (i, hist_img.shape[0] - intensity // 255 // region_percentage), (255, 0, 255), 5)
-            cv2.circle(hist_img, (base_point, hist_img.shape[0]), 20, (0, 255, 255), -1)
+        for i in range(480):
+            intensity = hist_vals[i]
+            j = i
+            if i < 240:
+                j = 240 - i
+                intensity = hist_vals[j]
+
+            #print(j, intensity)
+
+            #print("start (x,y)=", i, hist_img.shape[0], "\nend (x,y)=", i, hist_img.shape[0] - intensity // 255 // region_percentage )
+            if intensity != 0:
+                cv2.line(hist_img, (j, hist_img.shape[0] - intensity // 255 // region_percentage), (j, hist_img.shape[0]), (255, 0, 255), 5)
+                cv2.line(hist_img, (j, hist_img.shape[0] - intensity // 255 // region_percentage - 5), (j, hist_img.shape[0] - intensity // 255 // region_percentage), (255, 0, 0), 8)
+                if display_base_point:
+                    cv2.circle(hist_img, (base_point, hist_img.shape[0]), 20, (0, 255, 255), -1)
+
         return base_point, hist_img
 
     return base_point
