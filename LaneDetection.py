@@ -41,11 +41,11 @@ def lane_curve(frame):
     curve = sum(curve_list) // len(curve_list)
     hist_image_quarter = utils.display_curve(hist_image_quarter, curve, fps)
 
-    #display car
-    car_image = cv2.imread('car2.png')
-    car_y = car_image.shape[0]
-    car_x = car_image.shape[1]
-    hist_image_all[240 - car_y:240 - car_y + 113, base_point - int(car_x / 2):base_point + 135 - int(car_x / 2)] = car_image
+    # draw angle
+    hist_image_all = utils.draw_angle(hist_image_all, curve)
+
+    # display car
+    hist_image_all = utils.draw_car(hist_image_all, height, base_point)
 
     # visualize frames
 
