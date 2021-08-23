@@ -18,23 +18,21 @@ initial_points_trackbar_values = [102, 80, 20, 214]
 utils.initialize_Trackbars(initial_points_trackbar_values)
 
 
-def lane_curve(frame):
+def lane_curve(frame, width, height):
     fps = int(cap.get(cv2.CAP_PROP_FPS))
-    points = utils.val_trackbars()
-    height, width, channels = 240, 480, 3  # frame.shape
+    warping_points = utils.val_trackbars()
 
     # create frames
     threshed_frame = utils.thresholding(frame)
-    warped_and_threshed_frame = utils.warp(threshed_frame, points, width, height)
-    frame_with_points = utils.draw_points(frame.copy(), points)
-    # create mid histogram point
+    warped_and_threshed_frame = utils.warp(threshed_frame, warping_points, width, height)
+    frame_with_points = utils.draw_points(frame.copy(), warping_points)
+    # create base point and curvature
     base_point, hist_image_quarter = utils.get_histogram(warped_and_threshed_frame, min_thresh_percent=0.5,
                                                  display=True, region_percentage=4)
     curve_avg_point, hist_image_all = utils.get_histogram(warped_and_threshed_frame, min_thresh_percent=0.9,
                                                  display=True, display_base_point=False)
     curve_raw = curve_avg_point - base_point  # curve value
 
-    # curve calculation
     curve_list.append(curve_raw)
     if len(curve_list) > curve_list_avg_len:
         curve_list.pop(0)
@@ -69,7 +67,7 @@ while True:
     ret, frame = cap.read()
     #time.sleep(fps)
     frame = cv2.resize(frame, (width, height))
-    warped_and_threshed_frame = lane_curve(frame)
+    warped_and_threshed_frame = lane_curve(frame, width, height)
 
 
     if cv2.waitKey(1) & 0xFF == 27:
